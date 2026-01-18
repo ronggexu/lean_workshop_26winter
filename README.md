@@ -23,3 +23,12 @@ lean4_workshop_26winter/
 
 ## 安装 Lean 
 参考 [LEAN_INSTALL.md](LEAN_INSTALL.md)
+
+
+## 常用链接
+
+- Lean community 主页：https://leanprover-community.github.io  
+- Lean 社群 Zulip 论坛：https://leanprover.zulipchat.com  
+- Lean Game Server（含 Natural Number Game）：https://adam.math.hhu.de  
+- 在线使用 Lean：https://live.lean-lang.org/  
+- Mathlib 文档：https://leanprover-community.github.io/mathlib4_docs  
