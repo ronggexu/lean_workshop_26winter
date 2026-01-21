@@ -12,7 +12,7 @@
 ```text
 lean4_workshop_26winter/
 ├── exercises/        # 随堂练习
-├── homeworks/        # 作业
+├── homework/        # 作业
 ├── materials/        # 参考资料
 ├── notes/            # 讲义
 ├── AI4M_slices/      # AI for Math slices
@@ -26,7 +26,7 @@ lean4_workshop_26winter/
 参考 [LEAN_INSTALL.md](LEAN_INSTALL.md)
 
 ## 作业提交
-参考 [homeworks/README.md](homeworks/README.md)
+参考 [homeworks/README.md](homework/README.md)
 
 ## 常用链接
 
