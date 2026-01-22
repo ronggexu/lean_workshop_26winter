@@ -60,3 +60,68 @@ def ConvexOn : Prop :=
   Convex 𝕜 s ∧ ∀ ⦃x⦄, x ∈ s → ∀ ⦃y⦄, y ∈ s → ∀ ⦃a b : 𝕜⦄, 0 ≤ a → 0 ≤ b → a + b = 1 →
     f (a • x + b • y) ≤ a • f x + b • f y
 ```
+
+## 主要定理
+### `convex_sInter` 凸集的任意交仍是凸集
+`#check convex_sInter`
+```lean
+convex_sInter.{u_1, u_2} {𝕜 : Type u_1} {E : Type u_2} [Semiring 𝕜] [PartialOrder 𝕜] [AddCommMonoid E] [SMul 𝕜 E]
+  {S : Set (Set E)} (h : ∀ s ∈ S, Convex 𝕜 s) : Convex 𝕜 (⋂₀ S)
+ ```
+给出一个集合族，其中每一个都是凸集，那么其交也是凸集.
+
+### `ConvexOn.add,ConvexOn.smul` 凸函数的加法和数乘是凸函数
+- `#check ConvexOn.add`
+    ```lean
+    ConvexOn.add.{u_1, u_2, u_5} {𝕜 : Type u_1} {E : Type u_2} {β : Type u_5} [Semiring 𝕜] [PartialOrder 𝕜]
+    [AddCommMonoid E] [AddCommMonoid β] [PartialOrder β] [IsOrderedAddMonoid β] [SMul 𝕜 E] [DistribMulAction 𝕜 β]
+    {s : Set E} {f g : E → β} 
+
+    (hf : ConvexOn 𝕜 s f) (hg : ConvexOn 𝕜 s g) : ConvexOn 𝕜 s (f + g)
+    ```
+    两个凸函数 $f,g$ 之和 $f+g$ 也是凸函数.
+
+
+- `#check ConvexOn.smul`
+    ```lean
+    ConvexOn.smul.{u_1, u_2, u_5} {𝕜 : Type u_1} {E : Type u_2} {β : Type u_5} [CommSemiring 𝕜] [PartialOrder 𝕜]
+    [AddCommMonoid E] [AddCommMonoid β] [PartialOrder β] [SMul 𝕜 E] [Module 𝕜 β] [PosSMulMono 𝕜 β] {s : Set E} {f : E → β}
+    {c : 𝕜} 
+
+    (hc : 0 ≤ c) (hf : ConvexOn 𝕜 s f) : ConvexOn 𝕜 s fun x ↦ c • f x
+    ```
+    凸函数 $f$ 乘以一个正数依然是凸函数.
+
+
+### `ConvexOn.map_centerMass_le` 离散/积分版本琴生不等式
+- `#check map_centerMass_le`
+    ```lean
+    ConvexOn.map_centerMass_le.{u_1, u_2, u_4, u_5} {𝕜 : Type u_1} {E : Type u_2} {β : Type u_4} {ι : Type u_5} [Field 𝕜]
+    [LinearOrder 𝕜] [IsStrictOrderedRing 𝕜] [AddCommGroup E] [AddCommGroup β] [PartialOrder β] [IsOrderedAddMonoid β]
+    [Module 𝕜 E] [Module 𝕜 β] [IsStrictOrderedModule 𝕜 β] {s : Set E} {f : E → β} {t : Finset ι} {w : ι → 𝕜} {p : ι → E}
+
+    (hf : ConvexOn 𝕜 s f) (h₀ : ∀ i ∈ t, 0 ≤ w i) (h₁ : 0 < ∑ i ∈ t, w i) (hmem : ∀ i ∈ t, p i ∈ s) :
+    f (t.centerMass w p) ≤ t.centerMass w (f ∘ p)
+    ```
+    要求 $f$ 是 $s$ 上的凸函数，有一系列大于等于 $0$ 的权重 $w_i$（不全为0，和至少>0），以及有凸集 $s$ 上的一些点 $p_i$，满足：
+
+    $$f(\sum \frac{\omega_i}{\sum \omega_i}p_i)\leq\sum \frac{\omega_i}{\sum \omega_i}f(p_i)$$
+
+    定理中使用的 `centerMass` 其实就是加权平均.
+- 在连续化权重之后，有积分版本的 Jensen 不等式：
+
+    `#check ConvexOn.map_average_le`
+    ```lean
+    ConvexOn.map_average_le.{u_1, u_2} {α : Type u_1} {E : Type u_2} {m0 : MeasurableSpace α} [NormedAddCommGroup E]
+    [NormedSpace ℝ E] [CompleteSpace E] {μ : MeasureTheory.Measure α} {s : Set E} {f : α → E} {g : E → ℝ}
+    [MeasureTheory.IsFiniteMeasure μ] [NeZero μ] 
+
+    (hg : ConvexOn ℝ s g) (hgc : ContinuousOn g s) (hsc : IsClosed s)
+    (hfs : ∀ᵐ (x : α) ∂μ, f x ∈ s) (hfi : MeasureTheory.Integrable f μ) (hgi : MeasureTheory.Integrable (g ∘ f) μ) :
+    g (⨍ (x : α), f x ∂μ) ≤ ⨍ (x : α), g (f x) ∂μ
+    ```
+    对应自然语言，就是如果 $g$ 是标量 $\mathbb{R}$ 下，闭集 $s$ 上的一个连续凸函数，$\mu$ 是有限非零测度，$f: α → E$ 几乎处处取值于 $s$，且 $f,g \circ f$ 可积，那么
+    $$g\left(\int f \ \text{d}\mu/\mu(\alpha)\right)\leq\int g\circ f \ \text{d}\mu/\mu(\alpha)$$
+
+    定理中使用的记法 `⨍ (x : α), f x ∂μ` 是指均值积分
+    > For the average on a set, use ⨍ x in s, f x ∂μ, defined as ⨍ x, f x ∂(μ.restrict s)
