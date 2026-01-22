@@ -269,17 +269,44 @@ structure IsTopologicalBasis (s : Set (Set α)) : Prop where
 
 ## First-Countable
 
-`Mathlib.Topology.Bases`
+`Mathlib.Topology.Bases` `Mathlib.Order.Filter.CountablyGenerated` `Mathlib.Order.Filter.Defs` `Mathlib.Order.Filter.Basic`
 
 * `Implementation`: A first-countable space is one in which every point has a countable neighborhood basis:
 
 ```lean
 class _root_.FirstCountableTopology : Prop where
-
   /-- The filter `𝓝 a` is countably generated for all points `a`. -/
-
   nhds_generated_countable : ∀ a : α, (𝓝 a).IsCountablyGenerated
+
+class IsCountablyGenerated (f : Filter α) : Prop where
+  /-- There exists a countable set that generates the filter. -/
+  out : ∃ s : Set (Set α), s.Countable ∧ f = generate s
+
+structure Filter (α : Type*) where
+  /-- The set of sets that belong to the filter. -/
+  sets : Set (Set α)
+  /-- The set `Set.univ` belongs to any filter. -/
+  univ_sets : Set.univ ∈ sets
+  /-- If a set belongs to a filter, then its superset belongs to the filter as well. -/
+  sets_of_superset {x y} : x ∈ sets → x ⊆ y → y ∈ sets
+  /-- If two sets belong to a filter, then their intersection belongs to the filter as well. -/
+  inter_sets {x y} : x ∈ sets → y ∈ sets → x ∩ y ∈ sets
+
+def generate (g : Set (Set α)) : Filter α where
+  sets := {s | GenerateSets g s}
+  univ_sets := GenerateSets.univ
+  sets_of_superset := GenerateSets.superset
+  inter_sets := GenerateSets.inter
+
+inductive GenerateSets (g : Set (Set α)) : Set α → Prop
+  | basic {s : Set α} : s ∈ g → GenerateSets g s
+  | univ : GenerateSets g univ
+  | superset {s t : Set α} : GenerateSets g s → s ⊆ t → GenerateSets g t
+  | inter {s t : Set α} : GenerateSets g s → GenerateSets g t → GenerateSets g (s ∩ t)
 ```
+
+* `key point`: Filters can well characterize various properties of neighborhoods
+
 * `notation`:
 ```lean
 [FirstCountableTopology α]
