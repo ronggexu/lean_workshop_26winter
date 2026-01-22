@@ -49,7 +49,7 @@ def convexHull : ClosureOperator (Set E) := .ofCompletePred (Convex 𝕜) fun _ 
 
 数学对应：
 ```math
-\mathrm{convexHull}(s) = \bigcap \{ t \mid s \subseteq t, t \mathrm{concave} \}
+\mathrm{convexHull}(s) = \bigcap \{ t \mid s \subseteq t, t \mathrm{convex} \}
 ```
 
 ### `ConvexOn` 凸函数
@@ -130,7 +130,7 @@ convex_sInter.{u_1, u_2} {𝕜 : Type u_1} {E : Type u_2} [Semiring 𝕜] [Parti
     > For the average on a set, use ⨍ x in s, f x ∂μ, defined as ⨍ x, f x ∂(μ.restrict s)
 ## 待形式化的内容
 - 证明严格凸函数的微分性质
-- 平衡集（s : ∀ |λ|≤1, λ s ⊆ s）是星形集
+- 平衡集（s : ∀ |λ|≤1, λ • s ⊆ s）是星形集
 - 星形集的闭包是星形集
 - 星形集可缩（单点空间同伦等价）
 - 凸集的支撑集
