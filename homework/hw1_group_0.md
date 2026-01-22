@@ -5,6 +5,7 @@
 ```lean
 import Mathlib
 
+-- Comment
 theorem my_theorem : 1 + 1 = 2 := rfl
 ```
 
